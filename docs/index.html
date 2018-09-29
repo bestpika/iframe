@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Iframe</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <style>
+      html,
+      body,
+      iframe {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        line-height: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      iframe {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <iframe v-if="ifSrc" v-bind:src="ifSrc"></iframe>
+  </body>
+  <script>
+    (() => {
+      new Vue({
+        el: 'iframe',
+        data: {
+          ifSrc: ''
+        },
+        methods: {
+          iframeApply() {
+            let uri = decodeURIComponent(location.hash.substring(1))
+            switch (true) {
+              case uri.match(/^https?:/i) === null:
+                location.hash = window.prompt("請輸入網址")
+                return
+              case uri.match(/dailymotion[.]com[/]video[/]/i) !== null:
+                uri = uri.replace('http:', 'https:').replace('/video/', '/embed/video/')
+                break
+              default:
+                break
+            }
+            this.ifSrc = uri
+            location.hash = this.ifSrc
+            document.title = this.ifSrc
+          }
+        },
+        created() {
+          window.addEventListener('load', this.iframeApply)
+          window.addEventListener('hashchange', this.iframeApply)
+        }
+      })
+    })()
+  </script>
+
+</html>
